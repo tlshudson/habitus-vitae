@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: ./docker/backend
+    container_name: habitus-backend
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: habitus
+      DB_USERNAME: habitus
+      DB_PASSWORD: habitus_password
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+    container_name: habitus-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: npm run dev -- --host 0.0.0.0
+    depends_on:
+      - backend
+
+  database:
+    image: postgres:16-alpine
+    container_name: habitus-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: habitus
+      POSTGRES_USER: habitus
+      POSTGRES_PASSWORD: habitus_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
