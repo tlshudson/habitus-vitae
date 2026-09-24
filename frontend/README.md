@@ -1,75 +1,43 @@
-# React + TypeScript + Vite
+# Habitus Vitae — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+App de tracker de hábitos.
 
-Currently, two official plugins are available:
+## Como rodar localmente
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Este projeto roda inteiramente via Docker — não é necessário instalar Node, PHP ou Postgres na sua máquina.
 
-## React Compiler
+1. Tenha o Docker Desktop instalado e aberto
+2. Na **raiz do repositório** (`habitus-vitae/`, um nível acima desta pasta `frontend`), suba os containers:
+   \`\`\`bash
+   docker compose up -d
+   \`\`\`
+3. Acesse o frontend em `http://localhost:5173`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Comandos do dia a dia
 
-## Expanding the ESLint configuration
+Sempre execute comandos que envolvam dependências (instalar pacotes, rodar scripts) **dentro do container**, nunca direto na máquina/VM:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+\`\`\`bash
+docker compose exec frontend npm install # instalar dependências
+docker compose exec frontend npm install <pacote> # adicionar uma nova dependência
+docker compose logs frontend # ver os logs do frontend
+docker compose ps # ver o status dos containers
+docker compose down # parar tudo
+\`\`\`
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Variáveis de ambiente
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Copie o arquivo de exemplo e preencha os valores necessários:
+\`\`\`bash
+cp .env.example .env
+\`\`\`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estrutura de pastas
 
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- \`src/components\` — componentes reutilizáveis, sem regra de negócio
+- \`src/features\` — cada pasta representa uma funcionalidade do sistema:
+  - \`auth\` — autenticação (login, cadastro)
+  - \`habits\` — criação e gerenciamento de hábitos
+  - \`dashboard\` — visão geral e progresso do usuário
+  - \`checkins\` — registros diários de conclusão dos hábitos
+- \`src/routes\` — configuração das rotas da aplicação
